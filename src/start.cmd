@@ -1,1 +1,1 @@
-call python.exe ./main.py
+call uvicorn main:app --reload

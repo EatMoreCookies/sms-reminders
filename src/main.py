@@ -1,32 +1,18 @@
-from twilio_client import TwilioClient
-from database_client import DatabaseClient
-from models import Reminder
-import uuid
+from fastapi import FastAPI, Request, Response
+from twilio.twiml.messaging_response import MessagingResponse
 
-twilioClient: TwilioClient = TwilioClient()
+app = FastAPI()
 
-# twilioClient.send_message("Hello There Sir!")
-
-#print("Sent!")
-
-client = DatabaseClient()
-
-current_user_id: str = '07d5d47a-a041-11ed-84b6-c8348e4bbf3d'
-
-# reminder = Reminder(message='Do the dishes', user_id=current_user_id)
-
-# client.add_new_reminder(reminder)
-
-# reminder = Reminder(message='Rake the leaves', user_id=current_user_id)
-
-# client.add_new_reminder(reminder)
-
-# reminder = Reminder(message='Mow the lawns', user_id=current_user_id)
-
-# client.add_new_reminder(reminder)
-
-remindersCursor = client.get_all_reminders_for_user(current_user_id)
-
-for r in remindersCursor:
-    twilioClient.send_message(r['message'])
+@app.post("/sms")
+async def sms(request: Request):
+    form = await request.form()
     
+    fromNumber: str = form['From']
+    message: str = form['Body']
+
+    response = MessagingResponse()
+    response.message("Hello, you are {}, and you said {}".format(fromNumber, message))
+
+    print(response)
+
+    return Response(content=str(response), media_type="application/xml")
