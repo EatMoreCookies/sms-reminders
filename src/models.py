@@ -3,6 +3,9 @@ from typing import Optional
 
 
 class Reminder(BaseModel):
-    id: Optional[str] = None
-    user_id: Optional[str] = None
+    user_id: str
     message: str
+
+class User(BaseModel):
+    user_id: str
+    phone_number: str
