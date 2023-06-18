@@ -6,8 +6,8 @@ class TwilioClient:
         account_sid = os.environ['TWILIO_ACCOUNT_SID']
         auth_token = os.environ['TWILIO_AUTH_TOKEN']
         self.__client = Client(account_sid, auth_token)
-        self.__from_number = '+13143508941'
-        self.__test_to_number = '+16054843732'
+        self.__from_number = ''
+        self.__test_to_number = ''
 
     def send_message(self, message: str):
         message = self.__client.messages.create(

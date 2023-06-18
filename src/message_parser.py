@@ -5,16 +5,10 @@ import uuid
 class MessageParser:
     def __init__(self):
         self.__db_client = DatabaseClient()
-        self.__add_reminder_keys: list = [
-            "reminde",
-            "remind me",
-        ]
-
-        self.__get_reminder_keys: list = [
-            "get reminder"
-            "get reminders",
-            "get all reminders"
-        ]
+        
+        self.__fetch_reminders_key: str = 'fetch'
+        self.__add_reminder_key: str = 'add'
+        self.__remove_reminder_key = 'remove'
 
     def add_reminder(self, user_id: str, reminder_message: str):
         reminder = Reminder(user_id=user_id, message=reminder_message)
@@ -45,13 +39,18 @@ class MessageParser:
     def determine_response_body_from_message(self, from_phone_number, message: str):
         (current_user, is_new) = self.get_current_user(from_phone_number)
 
-        if is_new:
-            return "Welcome New User {}".format(current_user.phone_number)
+        response: str = ''
 
-        for k in self.__add_reminder_keys:
-            if message.lower().startswith(k):
-                return self.add_reminder(current_user.user_id, message.lower().removeprefix(k))
-        
-        for k in self.__get_reminder_keys:
-            if message.lower().startswith(k):
-                return self.get_reminders(current_user.user_id)   
+        if is_new:
+            response += 'Welcome New User {}.'.format(current_user.phone_number)
+
+        if message.lower().strip().startswith(self.__fetch_reminders_key):
+            response += self.get_reminders(current_user.user_id)
+
+        elif message.lower().strip().startswith(self.__add_reminder_key):
+            response += self.add_reminder(current_user.user_id, message.lower().removeprefix(self.__add_reminder_key)) 
+
+        else:
+            response = "Hmmm sorry we are not sure what you mean :/ Please try again :)"
+
+        return response
